@@ -1,0 +1,44 @@
+<html><head>
+
+<style>
+#graph-container {
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      position: absolute;
+    }
+</style>
+
+
+<!-- <script src="r.js"></script>  -->
+<!-- these URLs bring in libraries; they are called CDNs --> 
+ <!-- <script src="./linkurious.js/dist/sigma.min.js"></script> -->
+ <script src="https://rawgit.com/Linkurious/linkurious.js/develop/dist/sigma.min.js"></script>
+
+ <script src="https://rawgit.com/Linkurious/linkurious.js/develop/plugins/sigma.renderers.edgeLabels/settings.js"></script>
+<script src="https://rawgit.com/Linkurious/linkurious.js/develop/plugins/sigma.renderers.edgeLabels/sigma.canvas.edges.labels.def.js"></script>
+<script src="https://rawgit.com/Linkurious/linkurious.js/develop/plugins/sigma.renderers.edgeLabels/sigma.canvas.edges.labels.curve.js"></script>
+<script src="https://rawgit.com/Linkurious/linkurious.js/develop/plugins/sigma.renderers.edgeLabels/sigma.canvas.edges.labels.curvedArrow.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<!-- <script src="tasks/forceLink.js"></script>
+<script src="gruntfile.js"></script>
+<script src="supervisor.js"></script>
+<script src="worker.js"></script>  -->
+
+<script src="https://rawgit.com/Linkurious/linkurious.js/develop/plugins/sigma.layouts.forceLink/worker.js"></script>
+<script src="https://rawgit.com/Linkurious/linkurious.js/develop/plugins/sigma.layouts.forceLink/supervisor.js"></script>
+<!-- <script src = "linkurious/data/config/production.json"></script> -->
+
+</head>
+<body>
+
+<div id="container">
+    <div id="graph-container"></div>
+</div>
+
+
+</body>
+<script src="colorcodedlinkeddata.js"></script>
+</html>
