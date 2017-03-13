@@ -17,7 +17,7 @@ function parseCsv(data){
 //  console.log ("doop"+csv.toString());
 
 //split csv into array of triples
-  var tripleArray=csv.split('\v');
+  var tripleArray=csv.split('\t');
   // console.log (tripleArray[0]);
 
       var 
