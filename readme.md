@@ -6,3 +6,7 @@ It is important to note that a rich, narrative description of philosophies and p
 
 This dataset and visualization are intended to seed and inspire discussion, ammendment, and expansion. I hope that you will add to what I have or fork it and turn it into something useful for you. I would love to hear from you about what you'd like to do with the data, or about prospective collaborations. Please email me: klboyd at umd dot edu. You can learn more about me and my research at karenboyd.org and relatedworkblog.com.
 
+Development plans/wish list: 
+- Users should be able to see the information about each node (in nodes.csv) on rollover of nodes in visualization
+- Users should be able to see the names of nodes instead of relationship types when first opening .html
+- Users should be able to see different line types for different types of relationships
