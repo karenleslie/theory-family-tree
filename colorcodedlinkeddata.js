@@ -1,53 +1,68 @@
-/**
- * This example shows the available edge label renderers for the canvas
- * renderer.
+/* 
+
+This file contains all code for parsing the provided csv's, then feeding
+the data into linkurious for visualization.
+
+## INPUTS:
+
+# edges.csv
+Contents: The relationship between nodes / ideas. example row:
+  antipositivism,	type of,	epistemology 
+
+# nodes.csv [currently not used]
+Contents: All ideas along with a description. example row:
+  post-modernism,	"An intellectual mo..."" (Martin, 2002).
+
+# papers.csv [Currently not used.]
+
+## OUTPUT:
+The provided ideas as nodes, with lines (as defined by edges.csv) 
+between nodes, thereby showing the relationship between ideas.
+ 
  */
 
- //bring in CSV
-// $( document ).ready(function() {
 
- $.get("edges.csv",parseCsv);
+// run parseCsv() on edges.csv
+ $.get("edges.csv",visualizeCSV);
 
-// });
-var csv ;
+var edgesCSVString ;
 
-function parseCsv(data){
+// 
+function visualizeCSV(edgesCSV){
 
-  csv = data.toString();
+  edgesCSVString = edgesCSV.toString();
 //  console.log ("doop"+csv.toString());
 
-//split csv into array of triples
-  var tripleArray=csv.split('\r');
-  // console.log (tripleArray[0]);
+// split csv into array of triples
+// example: ("antipositivism",	"type of",	"epistemology")
+  var tripleArray=edgesCSVString.split('\r');
 
-      var 
-  //i,
-  //     s,
-  //     N = nodes,
-  //     E = edges,
-      nodesCheck= [],     
-      g = {
-        nodes: [],
-        edges: []
-      };
-// set up array for types. Will use if statement to assign nodes to types 
-// and assign types to colors
-     // types = [ontology, epistemology, theoretical perspective, theory, methodology, method, analytic tool]
-//    
+  var existingNodes = [];  // this will contain all unique nodes/ideas   
+  
+
+  // this will contain the node/connection data; used by linkurious
+  var linkuriousData = {
+      nodes: [],
+      edges: []
+    };
+
+
+// Set up some important parent "types" (e.g. "ontology," "Theory")
+// and detect nodes that are children of each. This will allow us to 
+//color code: the parent type will get a saturated color (e.g. green or purple)
+//and the immediate children will get a lighter shade of that color (e.g. light green. light purple)
   
 colorDict = {"ontology":"#FC9883","epistemology":"#FD8A80","theoretical perspective":"#81BE66",
 "theory":"#72BD97","methodology":"#5F99A5","methods":"#695C9B","analytic tool":"#A36EA1"};
 
-
+// iterate over all triples, assigning colors
 for (i=0; i<tripleArray.length; i++){
   //find a single node out of a triple
-  var oneTriple=tripleArray[i].split(',');
-  var subject = oneTriple[0];
-  var verb = oneTriple[1];
-  var object = oneTriple[2];
-  var chosenColor = "#666";
-
-  //var chosenColor = colorDict[object];
+  var subjectRelationshipObject=tripleArray[i].split(',');
+  var subject = subjectRelationshipObject[0].trim();
+  var verb = subjectRelationshipObject[1].trim();
+  var object = subjectRelationshipObject[2].trim();
+  var chosenColor = "#666"; // default color
 
  if (verb == "type of"){
     var chosenColor = colorDict[object];
@@ -73,22 +88,22 @@ for (i=0; i<tripleArray.length; i++){
     if (subject == 'methodology'){
     var chosenColor = "#155a68";
   };
-  //purple 4A32A0
+  //purple
     if (subject == 'methods'){
     var chosenColor = "#2d1d63";
   };
-  // //magenta
+  // magenta
     if (subject == 'analytic tool'){
     var chosenColor = "#4c1e4a";
   };
 
 
 
-  //check to see if that node already exists
-  //if it does not, add it to the end of the array and add it as a node
-    if ($.inArray(subject, nodesCheck)== -1){
-      nodesCheck.push(subject);
-      g.nodes.push({
+  // check to see if a node/idea already exists in existingNodes
+  // if it does not, add it to existingNodes (to track it), and add it as a linkurious node
+    if ($.inArray(subject, existingNodes)== -1){
+      existingNodes.push(subject);
+      linkuriousData.nodes.push({
         id: subject,
         label: subject,
         x: Math.random(),
@@ -98,11 +113,15 @@ for (i=0; i<tripleArray.length; i++){
       });
     };
 
-// if(verb == 'type of'){
-var chosenColor = '#999'
- // };
 
-// //teal
+    // Now assign colors to nodes that are the immediate "type of" 
+    //children of the special types assigned above. ("ontology", "theory," "methods", etc.)
+    // e.g. if "practice theory" is a "type of" "theory" and "theory" is dark green, 
+    // then "practice theory" should be assigned light green. This is only for "type of" relationships
+
+var chosenColor = '#999' // default
+
+// teal
   if (object == "theory"){
     var chosenColor = "#197043";
   };
@@ -133,12 +152,12 @@ var chosenColor = '#999'
   };
 
 
-  var object = oneTriple[2];
+  var object = subjectRelationshipObject[2].trim();
   //check to see if that node already exists
-  //if it does not, add it to the end of the array and add it as a node
-    if ($.inArray(object, nodesCheck)== -1){
-      nodesCheck.push(object);
-      g.nodes.push({
+  //if it does not, add it as a linkurious node
+    if ($.inArray(object, existingNodes)== -1){
+      existingNodes.push(object);
+      linkuriousData.nodes.push({
         id: object,
         label: object,
         x: Math.random(),
@@ -151,9 +170,9 @@ var chosenColor = '#999'
 };
 
 
-  // Instantiate sigma:
+  // setup linkurious visualization
   s = new sigma({
-    graph: g,
+    graph: linkuriousData,
     renderer: {
       container: document.getElementById('graph-container'),
       type: 'canvas'
@@ -166,12 +185,12 @@ var chosenColor = '#999'
   });
 
 
-
+  // create all the lines / relationships
   for (i=0; i<tripleArray.length; i++){
-    var oneTriple=tripleArray[i].split(',');
-    var verb = oneTriple[1];
-    var source = oneTriple[0],
-        target = oneTriple[2];
+    var subjectRelationshipObject=tripleArray[i].split(',');
+    var verb = subjectRelationshipObject[1].trim();
+    var source = subjectRelationshipObject[0].trim(),
+        target = subjectRelationshipObject[2].trim();
     var edgeType = 'curvedArrow';
     if (verb == 'opposed to'){
      edgeType = 'arrow';
@@ -185,7 +204,6 @@ var chosenColor = '#999'
         color: '#ccc',
         type: edgeType
       });
-
   };
 // Start the ForceLink algorithm:
 var fa = sigma.layouts.startForceLink(s, {
